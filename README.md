@@ -71,12 +71,12 @@ dev-knifesweep status       # estado de todo
 
 El asistente detecta tus proyectos (Xcode, SwiftPM, Node, Gradle, Flutter,
 Rust), muestra cuánto ocupa cada uno y cuánto es recuperable, te deja elegir,
-te ofrece hacer commit antes, enseña un reporte y solo borra tras escribir
-`SI`/`YES`. La rutina programada usa **solo** nivel safe.
+te ofrece hacer commit antes, enseña un reporte y solo borra tras confirmar
+`[S/N]`. La rutina programada usa **solo** nivel safe.
 
 The wizard detects your projects, shows size vs. reclaimable per project, lets
 you choose, offers a git checkpoint first, shows a report, and only deletes
-after you type `SI`/`YES`. The scheduled routine uses the **safe** level only.
+after a `[Y/N]` confirmation. The scheduled routine uses the **safe** level only.
 
 ---
 
@@ -94,7 +94,8 @@ after you type `SI`/`YES`. The scheduled routine uses the **safe** level only.
    publicado, no artefactos. / Package `dist`/`build` are published code.
 4. **Regla de montajes** — nada que viva bajo un punto de montaje en `$HOME`
    (p. ej. CoreDevice reporta 65GB falsos). / Nothing under a `$HOME` mount.
-5. **Confirmación escrita** + aceptación única del aviso por el humano.
+5. **Confirmación explícita [S/N]** + aceptación única del aviso por el humano.
+   / Explicit [Y/N] confirmation + one-time human acceptance of the notice.
 6. **Rutinas solo safe** — lo automático nunca corre `--deep`.
 7. **Log completo** en `~/Library/Logs/dev-knifesweep.log`.
 8. **Lista protegida absoluta** codificada en el motor (arriba).
@@ -125,5 +126,9 @@ rebuild and install the whole kit.
 ```bash
 dev-knifesweep uninstall
 ```
+
+---
+
+**Creado por / Created by [j0suedaniel](https://github.com/j0suedaniel) · JDMC.TECH**
 
 MIT © 2026 JDMC.TECH

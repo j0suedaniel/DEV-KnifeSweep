@@ -27,7 +27,7 @@ change of yours may break them).
 5. NUNCA ejecutes una limpieza (`--run`) sin la confirmación explícita del
    usuario en el chat, y jamás borres artefactos con `rm -rf` a mano.
 
-## Archivo 1/3: `~/.local/bin/dev-knifesweep`  (v0.2.0)
+## Archivo 1/3: `~/.local/bin/dev-knifesweep`  (v0.2.1)
 
 ````bash
 #!/bin/bash
@@ -63,12 +63,13 @@ change of yours may break them).
 #    dev-knifesweep unschedule       quitar rutina y monitor / remove agents
 #    dev-knifesweep uninstall        desinstalar todo / uninstall everything
 #
+#  Creado por / Created by: j0suedaniel · JDMC.TECH
 #  https://github.com/j0suedaniel/DEV-KnifeSweep
 # ═══════════════════════════════════════════════════════════════════════════
 
 set -uo pipefail
 
-KNIFESWEEP_VERSION="0.2.0"
+KNIFESWEEP_VERSION="0.2.1"
 STATE_DIR="$HOME/.dev-knifesweep"
 ACCEPT_FILE="$STATE_DIR/disclaimer-accepted"
 LOG="$HOME/Library/Logs/dev-knifesweep.log"
@@ -248,10 +249,11 @@ cmd_accept() {
         "To accept, run 'dev-knifesweep accept' in an interactive terminal (you, not your agent)."
     exit 1
   fi
-  printf '%s' "$(txt '  ¿Aceptas estos términos? Escribe ACEPTO: ' '  Do you accept these terms? Type ACCEPT: ')"
+  printf '%s' "$(txt '  ¿Aceptas estos términos? [S/N]: ' '  Do you accept these terms? [Y/N]: ')"
   local r; read -r r
+  r=$(printf '%s' "$r" | tr -d '\r' | tr '[:upper:]' '[:lower:]')
   case "$r" in
-    ACEPTO|ACCEPT)
+    s|si|sí|y|yes|acepto|accept)
       mkdir -p "$STATE_DIR"
       { echo "accepted=$(ts)"; echo "version=$KNIFESWEEP_VERSION"; echo "user=$USER"; } > "$ACCEPT_FILE"
       msg "  ✓ Aceptado. Registrado en $ACCEPT_FILE" "  ✓ Accepted. Recorded at $ACCEPT_FILE" ;;
@@ -525,9 +527,10 @@ cmd_clean() { # usa globals: ROOT LEVEL MODE ASSUME_YES DO_GLOBAL
       is_tty || { msg "Sin terminal: usa --yes (tras aceptar el aviso) para correr sin preguntar." \
                       "No terminal: use --yes (after accepting the notice) to run unattended."; exit 1; }
       show_protections; echo ""
-      printf '%s' "$(txt '  ¿Confirmas la limpieza? Escribe SI: ' '  Confirm cleanup? Type YES: ')"
+      printf '%s' "$(txt '  ¿Confirmas la limpieza? [S/N]: ' '  Confirm cleanup? [Y/N]: ')"
       local r; read -r r
-      case "$r" in SI|YES) : ;; *) msg "  Cancelado." "  Cancelled."; exit 0 ;; esac
+      r=$(printf '%s' "$r" | tr -d '\r' | tr '[:upper:]' '[:lower:]')
+      case "$r" in s|si|sí|y|yes) : ;; *) msg "  Cancelado." "  Cancelled."; exit 0 ;; esac
     fi
   fi
 
@@ -564,8 +567,10 @@ cmd_wizard() {
   is_tty || { msg "El asistente necesita una terminal. Usa: dev-knifesweep scan / clean --root …" \
                   "The wizard needs a terminal. Use: dev-knifesweep scan / clean --root …"; exit 1; }
   echo ""
-  msg "🧹 DEV-KnifeSweep v$KNIFESWEEP_VERSION — asistente de mantenimiento" \
-      "🧹 DEV-KnifeSweep v$KNIFESWEEP_VERSION — maintenance wizard"
+  msg "🔪🧹 DEV-KnifeSweep v$KNIFESWEEP_VERSION — asistente de mantenimiento" \
+      "🔪🧹 DEV-KnifeSweep v$KNIFESWEEP_VERSION — maintenance wizard"
+  msg "   creado por j0suedaniel · JDMC.TECH" \
+      "   created by j0suedaniel · JDMC.TECH"
   echo ""
 
   # 1) raíz / root
@@ -642,9 +647,10 @@ cmd_wizard() {
   require_accept
   show_protections
   echo ""
-  printf '%s' "$(txt '¿Ejecutar la limpieza de verdad? Escribe SI: ' 'Run the real cleanup? Type YES: ')"
+  printf '%s' "$(txt '¿Ejecutar la limpieza de verdad? [S/N]: ' 'Run the real cleanup? [Y/N]: ')"
   local ok; read -r ok
-  case "$ok" in SI|YES) : ;; *) msg "Cancelado. Nada fue borrado." "Cancelled. Nothing was deleted."; exit 0 ;; esac
+  ok=$(printf '%s' "$ok" | tr -d '\r' | tr '[:upper:]' '[:lower:]')
+  case "$ok" in s|si|sí|y|yes) : ;; *) msg "Cancelado. Nada fue borrado." "Cancelled. Nothing was deleted."; exit 0 ;; esac
 
   # 8) ejecutar / execute
   MODE="run"; FREED_K=0; ITEMS=0; SEEN_TARGETS=""
@@ -841,7 +847,7 @@ while [ $# -gt 0 ]; do
     --yes|-y)    ASSUME_YES=1 ;;
     --global)    DO_GLOBAL=1 ;;
     --no-global) DO_GLOBAL=0 ;;
-    --version|-V) echo "dev-knifesweep $KNIFESWEEP_VERSION"; exit 0 ;;
+    --version|-V) echo "dev-knifesweep $KNIFESWEEP_VERSION · $(txt 'creado por' 'created by') j0suedaniel · JDMC.TECH"; exit 0 ;;
     -h|--help)   sed -n '2,40p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
     *) msg "Opción desconocida: $1 (usa --help)" "Unknown option: $1 (use --help)"; exit 1 ;;
   esac
