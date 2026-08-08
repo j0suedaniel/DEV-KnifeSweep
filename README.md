@@ -1,4 +1,4 @@
-# 🧹 DevSweep
+# 🔪🧹 DEV-KnifeSweep
 
 **ES** — Mantenimiento y optimización de directorios de proyectos para macOS.
 Limpia **únicamente artefactos de build regenerables** y te devuelve los GB que
@@ -12,20 +12,20 @@ building eats, while never touching your code or your progress.
 
 ## ⚠️ Aviso / Notice
 
-> **ES:** DevSweep se ofrece TAL CUAL, sin garantías; sus autores **no se hacen
+> **ES:** DEV-KnifeSweep se ofrece TAL CUAL, sin garantías; sus autores **no se hacen
 > responsables de pérdida de datos**. Todo lo que borra es regenerable con un
 > build o una instalación de dependencias — el costo real es tiempo (el próximo
 > build será completo), no trabajo. Aun así: **haz commit y push antes de
-> limpiar**. DevSweep te lo ofrece en cada ejecución.
+> limpiar**. DEV-KnifeSweep te lo ofrece en cada ejecución.
 >
-> **EN:** DevSweep is provided AS IS, without warranty; its authors are **not
+> **EN:** DEV-KnifeSweep is provided AS IS, without warranty; its authors are **not
 > responsible for data loss**. Everything it deletes is regenerable by a build
 > or a dependency install — the real cost is time (your next build will be a
-> full one), not work. Still: **commit and push before cleaning**. DevSweep
+> full one), not work. Still: **commit and push before cleaning**. DEV-KnifeSweep
 > offers this on every run.
 
-La primera limpieza exige leer y aceptar este aviso: `devsweep accept`.
-The first cleanup requires reading and accepting this notice: `devsweep accept`.
+La primera limpieza exige leer y aceptar este aviso: `dev-knifesweep accept`.
+The first cleanup requires reading and accepting this notice: `dev-knifesweep accept`.
 
 ---
 
@@ -34,34 +34,34 @@ The first cleanup requires reading and accepting this notice: `devsweep accept`.
 **Una línea / One-liner:**
 
 ```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/j0suedaniel/devsweep/main/install.sh)"
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/j0suedaniel/DEV-KnifeSweep/main/install.sh)"
 ```
 
 **Con tu agente / With your agent** (Claude Code o Codex CLI) — pégale esto:
 
-> Instala DevSweep desde https://github.com/j0suedaniel/devsweep (clona el repo
-> y corre ./install.sh). Después muéstrame `devsweep status` y explícame los
+> Instala DEV-KnifeSweep desde https://github.com/j0suedaniel/DEV-KnifeSweep (clona el repo
+> y corre ./install.sh). Después muéstrame `dev-knifesweep status` y explícame los
 > comandos. No ejecutes ninguna limpieza sin mi confirmación.
 
 **Desde un zip / From a zip:** descomprime y corre `./install.sh`.
 
 El instalador coloca / The installer puts:
-- `~/.local/bin/devsweep` — el motor / the engine
-- `~/.claude/skills/devsweep/` — skill para Claude Code (`/devsweep`)
-- `~/.codex/prompts/devsweep.md` — prompt para Codex CLI (`/devsweep`)
+- `~/.local/bin/dev-knifesweep` — el motor / the engine
+- `~/.claude/skills/dev-knifesweep/` — skill para Claude Code (`/dev-knifesweep`)
+- `~/.codex/prompts/dev-knifesweep.md` — prompt para Codex CLI (`/dev-knifesweep`)
 
 ---
 
 ## Uso / Usage
 
 ```bash
-devsweep              # asistente interactivo / interactive wizard
-devsweep scan  --root ~/Proyectos
-devsweep clean --root ~/Proyectos --safe --report   # dry-run (nada se borra)
-devsweep clean --root ~/Proyectos --deep --run      # pide confirmación escrita
-devsweep schedule     # rutina automática: diaria / cada 3 días / semanal
-devsweep monitor      # notificación cuando el disco libre baje del umbral
-devsweep status       # estado de todo
+dev-knifesweep              # asistente interactivo / interactive wizard
+dev-knifesweep scan  --root ~/Proyectos
+dev-knifesweep clean --root ~/Proyectos --safe --report   # dry-run (nada se borra)
+dev-knifesweep clean --root ~/Proyectos --deep --run      # pide confirmación escrita
+dev-knifesweep schedule     # rutina automática: diaria / cada 3 días / semanal
+dev-knifesweep monitor      # notificación cuando el disco libre baje del umbral
+dev-knifesweep status       # estado de todo
 ```
 
 | Nivel / Level | Qué limpia / What it cleans |
@@ -96,7 +96,7 @@ after you type `SI`/`YES`. The scheduled routine uses the **safe** level only.
    (p. ej. CoreDevice reporta 65GB falsos). / Nothing under a `$HOME` mount.
 5. **Confirmación escrita** + aceptación única del aviso por el humano.
 6. **Rutinas solo safe** — lo automático nunca corre `--deep`.
-7. **Log completo** en `~/Library/Logs/devsweep.log`.
+7. **Log completo** en `~/Library/Logs/dev-knifesweep.log`.
 8. **Lista protegida absoluta** codificada en el motor (arriba).
 
 ---
@@ -123,7 +123,7 @@ rebuild and install the whole kit.
 ## Desinstalar / Uninstall
 
 ```bash
-devsweep uninstall
+dev-knifesweep uninstall
 ```
 
 MIT © 2026 JDMC.TECH

@@ -1,5 +1,5 @@
-# PROMPT MAESTRO — instala DevSweep sin acceso a GitHub
-# MASTER PROMPT — installs DevSweep without GitHub access
+# PROMPT MAESTRO — instala DEV-KnifeSweep sin acceso a GitHub
+# MASTER PROMPT — installs DEV-KnifeSweep without GitHub access
 
 **ES — Instrucciones para ti (humano):** copia TODO este archivo y pégaselo a
 tu agente (Claude Code o Codex CLI) en una carpeta cualquiera. El agente creará
@@ -19,21 +19,21 @@ it EXACTLY as shown (it is a deletion tool with audited safety guards; any
 change of yours may break them).
 
 1. Escribe cada bloque de abajo en la ruta indicada (crea las carpetas).
-2. `chmod +x ~/.local/bin/devsweep`
-3. Verifica: `devsweep --version` y `devsweep status`.
-4. Dile al usuario que corra ÉL MISMO `devsweep accept` en su terminal
+2. `chmod +x ~/.local/bin/dev-knifesweep`
+3. Verifica: `dev-knifesweep --version` y `dev-knifesweep status`.
+4. Dile al usuario que corra ÉL MISMO `dev-knifesweep accept` en su terminal
    (es interactivo a propósito — la aceptación es humana), y después
-   `devsweep` para el asistente.
+   `dev-knifesweep` para el asistente.
 5. NUNCA ejecutes una limpieza (`--run`) sin la confirmación explícita del
    usuario en el chat, y jamás borres artefactos con `rm -rf` a mano.
 
-## Archivo 1/3: `~/.local/bin/devsweep`  (v0.1.0)
+## Archivo 1/3: `~/.local/bin/dev-knifesweep`  (v0.2.0)
 
 ````bash
 #!/bin/bash
 # ═══════════════════════════════════════════════════════════════════════════
-#  DevSweep — mantenimiento y optimización de directorios de proyectos (macOS)
-#  DevSweep — project-directory maintenance & optimization (macOS)
+#  DEV-KnifeSweep — mantenimiento y optimización de directorios de proyectos (macOS)
+#  DEV-KnifeSweep — project-directory maintenance & optimization (macOS)
 # ═══════════════════════════════════════════════════════════════════════════
 #  ES: Limpia SOLO artefactos de build regenerables (DerivedData, build/,
 #      dist/, cachés de Gradle/SPM/npm…). NUNCA toca tu código fuente, .git,
@@ -52,35 +52,35 @@ change of yours may break them).
 #      build/install, but ALWAYS commit your work before running a cleanup.
 #
 #  Uso / Usage:
-#    devsweep                  asistente interactivo / interactive wizard
-#    devsweep scan  [--root D] descubre proyectos / discover projects
-#    devsweep clean [--root D] --safe|--deep [--report|--run] [--yes]
+#    dev-knifesweep                  asistente interactivo / interactive wizard
+#    dev-knifesweep scan  [--root D] descubre proyectos / discover projects
+#    dev-knifesweep clean [--root D] --safe|--deep [--report|--run] [--yes]
 #                              [--global|--no-global]
-#    devsweep schedule         programar rutina / set up a routine (launchd)
-#    devsweep monitor          monitor de espacio libre / free-space monitor
-#    devsweep status           estado / status
-#    devsweep accept           leer y aceptar el aviso / read & accept notice
-#    devsweep unschedule       quitar rutina y monitor / remove agents
-#    devsweep uninstall        desinstalar todo / uninstall everything
+#    dev-knifesweep schedule         programar rutina / set up a routine (launchd)
+#    dev-knifesweep monitor          monitor de espacio libre / free-space monitor
+#    dev-knifesweep status           estado / status
+#    dev-knifesweep accept           leer y aceptar el aviso / read & accept notice
+#    dev-knifesweep unschedule       quitar rutina y monitor / remove agents
+#    dev-knifesweep uninstall        desinstalar todo / uninstall everything
 #
-#  https://github.com/j0suedaniel/devsweep
+#  https://github.com/j0suedaniel/DEV-KnifeSweep
 # ═══════════════════════════════════════════════════════════════════════════
 
 set -uo pipefail
 
-DEVSWEEP_VERSION="0.1.0"
-STATE_DIR="$HOME/.devsweep"
+KNIFESWEEP_VERSION="0.2.0"
+STATE_DIR="$HOME/.dev-knifesweep"
 ACCEPT_FILE="$STATE_DIR/disclaimer-accepted"
-LOG="$HOME/Library/Logs/devsweep.log"
-PLIST_ROUTINE="$HOME/Library/LaunchAgents/com.devsweep.routine.plist"
-PLIST_MONITOR="$HOME/Library/LaunchAgents/com.devsweep.monitor.plist"
+LOG="$HOME/Library/Logs/dev-knifesweep.log"
+PLIST_ROUTINE="$HOME/Library/LaunchAgents/com.dev-knifesweep.routine.plist"
+PLIST_MONITOR="$HOME/Library/LaunchAgents/com.dev-knifesweep.monitor.plist"
 
 # TTL (días/days) del nivel safe / for the safe level
 SAFE_TTL=7
 
 # ── Idioma / Language ─────────────────────────────────────────────────────
-# DEVSWEEP_LANG=es|en fuerza el idioma; si no, se detecta de $LANG.
-case "${DEVSWEEP_LANG:-${LANG:-en}}" in
+# KNIFESWEEP_LANG=es|en fuerza el idioma; si no, se detecta de $LANG.
+case "${KNIFESWEEP_LANG:-${LANG:-en}}" in
   es*|ES*) L=es ;;
   *)       L=en ;;
 esac
@@ -216,8 +216,8 @@ show_disclaimer() {
   msg "  AVISO IMPORTANTE — léelo una vez, en serio" \
       "  IMPORTANT NOTICE — read it once, seriously"
   echo "═══════════════════════════════════════════════════════════════"
-  msg "  1. DevSweep borra ÚNICAMENTE artefactos regenerables de build." \
-      "  1. DevSweep deletes ONLY regenerable build artifacts."
+  msg "  1. DEV-KnifeSweep borra ÚNICAMENTE artefactos regenerables de build." \
+      "  1. DEV-KnifeSweep deletes ONLY regenerable build artifacts."
   msg "     Tu proyecto, tu código y tu progreso NO se tocan." \
       "     Your project, your code and your progress are NOT touched."
   msg "  2. El costo real es tiempo: el próximo build será completo" \
@@ -226,8 +226,8 @@ show_disclaimer() {
       "     (not incremental) and npm/pod/gradle will re-download caches."
   msg "  3. AUN ASÍ: haz commit y push de tu trabajo antes de limpiar." \
       "  3. STILL: commit and push your work before cleaning."
-  msg "     DevSweep te lo ofrecerá cada vez; acéptalo." \
-      "     DevSweep will offer this every time; take it."
+  msg "     DEV-KnifeSweep te lo ofrecerá cada vez; acéptalo." \
+      "     DEV-KnifeSweep will offer this every time; take it."
   msg "  4. Esta herramienta se ofrece TAL CUAL, sin garantía de ningún" \
       "  4. This tool is provided AS IS, with no warranty of any kind."
   msg "     tipo. Los autores NO se hacen responsables de pérdida de" \
@@ -244,8 +244,8 @@ is_accepted() { [ -f "$ACCEPT_FILE" ]; }
 cmd_accept() {
   show_disclaimer
   if ! is_tty; then
-    msg "Para aceptar, corre 'devsweep accept' en una terminal interactiva (tú, no tu agente)." \
-        "To accept, run 'devsweep accept' in an interactive terminal (you, not your agent)."
+    msg "Para aceptar, corre 'dev-knifesweep accept' en una terminal interactiva (tú, no tu agente)." \
+        "To accept, run 'dev-knifesweep accept' in an interactive terminal (you, not your agent)."
     exit 1
   fi
   printf '%s' "$(txt '  ¿Aceptas estos términos? Escribe ACEPTO: ' '  Do you accept these terms? Type ACCEPT: ')"
@@ -253,10 +253,10 @@ cmd_accept() {
   case "$r" in
     ACEPTO|ACCEPT)
       mkdir -p "$STATE_DIR"
-      { echo "accepted=$(ts)"; echo "version=$DEVSWEEP_VERSION"; echo "user=$USER"; } > "$ACCEPT_FILE"
+      { echo "accepted=$(ts)"; echo "version=$KNIFESWEEP_VERSION"; echo "user=$USER"; } > "$ACCEPT_FILE"
       msg "  ✓ Aceptado. Registrado en $ACCEPT_FILE" "  ✓ Accepted. Recorded at $ACCEPT_FILE" ;;
     *)
-      msg "  No aceptado. DevSweep no ejecutará limpiezas." "  Not accepted. DevSweep will not run cleanups."
+      msg "  No aceptado. DEV-KnifeSweep no ejecutará limpiezas." "  Not accepted. DEV-KnifeSweep will not run cleanups."
       exit 1 ;;
   esac
 }
@@ -268,8 +268,8 @@ require_accept() {
   if is_tty; then
     cmd_accept
   else
-    msg "    devsweep accept   (córrelo tú en la terminal)" \
-        "    devsweep accept   (run it yourself in the terminal)"
+    msg "    dev-knifesweep accept   (córrelo tú en la terminal)" \
+        "    dev-knifesweep accept   (run it yourself in the terminal)"
     exit 1
   fi
 }
@@ -454,7 +454,7 @@ offer_git_checkpoint() { # $1=git_root
     read -r r
     case "$r" in
       s|S|y|Y)
-        git -C "$g" add -A && git -C "$g" commit -m "devsweep: checkpoint $(ts)" >/dev/null 2>&1 \
+        git -C "$g" add -A && git -C "$g" commit -m "dev-knifesweep: checkpoint $(ts)" >/dev/null 2>&1 \
           && msg "    ✓ commit hecho" "    ✓ committed" \
           || msg "    ✗ commit falló — revisa a mano" "    ✗ commit failed — check manually" ;;
     esac
@@ -476,8 +476,8 @@ offer_git_checkpoint() { # $1=git_root
 cmd_scan() {
   local root="$1"
   echo "═══════════════════════════════════════════════════════════════"
-  msg "  DevSweep v$DEVSWEEP_VERSION — proyectos en: $root" \
-      "  DevSweep v$DEVSWEEP_VERSION — projects in: $root"
+  msg "  DEV-KnifeSweep v$KNIFESWEEP_VERSION — proyectos en: $root" \
+      "  DEV-KnifeSweep v$KNIFESWEEP_VERSION — projects in: $root"
   echo "═══════════════════════════════════════════════════════════════"
   discover_projects "$root"
   if [ ${#PROJ_ROOTS[@]} -eq 0 ]; then
@@ -513,8 +513,8 @@ cmd_scan() {
 cmd_clean() { # usa globals: ROOT LEVEL MODE ASSUME_YES DO_GLOBAL
   local lname; lname="$([ "$LEVEL" -ge 2 ] && echo deep || echo safe)"
   echo "═══════════════════════════════════════════════════════════════"
-  msg "  DevSweep clean — nivel: $lname · modo: $MODE · raíz: $ROOT" \
-      "  DevSweep clean — level: $lname · mode: $MODE · root: $ROOT"
+  msg "  DEV-KnifeSweep clean — nivel: $lname · modo: $MODE · raíz: $ROOT" \
+      "  DEV-KnifeSweep clean — level: $lname · mode: $MODE · root: $ROOT"
   echo "═══════════════════════════════════════════════════════════════"
   msg "  Disco libre antes: $(free_now)" "  Free disk before: $(free_now)"
 
@@ -547,12 +547,12 @@ cmd_clean() { # usa globals: ROOT LEVEL MODE ASSUME_YES DO_GLOBAL
     msg "  Disco libre después: $(free_now) · liberado ~$(human "$FREED_K") en $ITEMS elemento(s)" \
         "  Free disk after: $(free_now) · freed ~$(human "$FREED_K") across $ITEMS item(s)"
     logln "freed ~$(human "$FREED_K") items=$ITEMS"
-    osascript -e "display notification \"$(txt 'Liberado' 'Freed') ~$(human "$FREED_K")\" with title \"DevSweep\"" 2>/dev/null || true
+    osascript -e "display notification \"$(txt 'Liberado' 'Freed') ~$(human "$FREED_K")\" with title \"DEV-KnifeSweep\"" 2>/dev/null || true
   else
     msg "  Liberaría ~$(human "$FREED_K") en $ITEMS elemento(s). Nada fue borrado." \
         "  Would free ~$(human "$FREED_K") across $ITEMS item(s). Nothing was deleted."
-    msg "  Para ejecutar:  devsweep clean --root \"$ROOT\" --$lname --run" \
-        "  To execute:  devsweep clean --root \"$ROOT\" --$lname --run"
+    msg "  Para ejecutar:  dev-knifesweep clean --root \"$ROOT\" --$lname --run" \
+        "  To execute:  dev-knifesweep clean --root \"$ROOT\" --$lname --run"
   fi
   rule
 }
@@ -561,11 +561,11 @@ cmd_clean() { # usa globals: ROOT LEVEL MODE ASSUME_YES DO_GLOBAL
 #  ASISTENTE INTERACTIVO / INTERACTIVE WIZARD
 # ═══════════════════════════════════════════════════════════════════════════
 cmd_wizard() {
-  is_tty || { msg "El asistente necesita una terminal. Usa: devsweep scan / clean --root …" \
-                  "The wizard needs a terminal. Use: devsweep scan / clean --root …"; exit 1; }
+  is_tty || { msg "El asistente necesita una terminal. Usa: dev-knifesweep scan / clean --root …" \
+                  "The wizard needs a terminal. Use: dev-knifesweep scan / clean --root …"; exit 1; }
   echo ""
-  msg "🧹 DevSweep v$DEVSWEEP_VERSION — asistente de mantenimiento" \
-      "🧹 DevSweep v$DEVSWEEP_VERSION — maintenance wizard"
+  msg "🧹 DEV-KnifeSweep v$KNIFESWEEP_VERSION — asistente de mantenimiento" \
+      "🧹 DEV-KnifeSweep v$KNIFESWEEP_VERSION — maintenance wizard"
   echo ""
 
   # 1) raíz / root
@@ -662,7 +662,7 @@ cmd_wizard() {
   msg "  Recuerda: el próximo build de cada proyecto limpiado será completo." \
       "  Remember: each cleaned project's next build will be a full one."
   logln "wizard freed ~$(human "$FREED_K")"
-  osascript -e "display notification \"$(txt 'Liberado' 'Freed') ~$(human "$FREED_K")\" with title \"DevSweep\"" 2>/dev/null || true
+  osascript -e "display notification \"$(txt 'Liberado' 'Freed') ~$(human "$FREED_K")\" with title \"DEV-KnifeSweep\"" 2>/dev/null || true
   rule
 
   # 9) ofrecer rutina / offer routine
@@ -688,10 +688,10 @@ write_plist_routine() { # $1=root $2=freq(d|3|w)
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0"><dict>
-  <key>Label</key><string>com.devsweep.routine</string>
+  <key>Label</key><string>com.dev-knifesweep.routine</string>
   <key>ProgramArguments</key><array>
     <string>/bin/bash</string>
-    <string>$HOME/.local/bin/devsweep</string>
+    <string>$HOME/.local/bin/dev-knifesweep</string>
     <string>clean</string><string>--root</string><string>$root</string>
     <string>--safe</string><string>--run</string><string>--yes</string>
   </array>
@@ -749,10 +749,10 @@ cmd_monitor() {
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0"><dict>
-  <key>Label</key><string>com.devsweep.monitor</string>
+  <key>Label</key><string>com.dev-knifesweep.monitor</string>
   <key>ProgramArguments</key><array>
     <string>/bin/bash</string>
-    <string>$HOME/.local/bin/devsweep</string>
+    <string>$HOME/.local/bin/dev-knifesweep</string>
     <string>_monitor-check</string>
   </array>
   <key>StartInterval</key><integer>21600</integer>
@@ -776,7 +776,7 @@ cmd_monitor_check() {
   local fg; fg=$(free_gb)
   logln "monitor: free=${fg}G threshold=${th}G"
   if [ "${fg:-999}" -lt "$th" ]; then
-    osascript -e "display notification \"$(txt "Disco libre: ${fg}GB (umbral ${th}GB). Corre 'devsweep' para limpiar." "Free disk: ${fg}GB (threshold ${th}GB). Run 'devsweep' to clean up.")\" with title \"DevSweep\"" 2>/dev/null || true
+    osascript -e "display notification \"$(txt "Disco libre: ${fg}GB (umbral ${th}GB). Corre 'dev-knifesweep' para limpiar." "Free disk: ${fg}GB (threshold ${th}GB). Run 'dev-knifesweep' to clean up.")\" with title \"DEV-KnifeSweep\"" 2>/dev/null || true
   fi
 }
 
@@ -784,16 +784,16 @@ cmd_monitor_check() {
 #  STATUS / UNSCHEDULE / UNINSTALL
 # ═══════════════════════════════════════════════════════════════════════════
 cmd_status() {
-  msg "DevSweep v$DEVSWEEP_VERSION · disco libre: $(free_now)" \
-      "DevSweep v$DEVSWEEP_VERSION · free disk: $(free_now)"
+  msg "DEV-KnifeSweep v$KNIFESWEEP_VERSION · disco libre: $(free_now)" \
+      "DEV-KnifeSweep v$KNIFESWEEP_VERSION · free disk: $(free_now)"
   if is_accepted; then
     msg "  aviso: aceptado ($(grep accepted= "$ACCEPT_FILE" | cut -d= -f2))" \
         "  notice: accepted ($(grep accepted= "$ACCEPT_FILE" | cut -d= -f2))"
   else
-    msg "  aviso: PENDIENTE — corre 'devsweep accept'" "  notice: PENDING — run 'devsweep accept'"
+    msg "  aviso: PENDIENTE — corre 'dev-knifesweep accept'" "  notice: PENDING — run 'dev-knifesweep accept'"
   fi
   local a
-  for a in com.devsweep.routine com.devsweep.monitor; do
+  for a in com.dev-knifesweep.routine com.dev-knifesweep.monitor; do
     if launchctl print "gui/$(id -u)/$a" >/dev/null 2>&1; then
       msg "  $a: cargado" "  $a: loaded"
     else
@@ -819,11 +819,11 @@ cmd_unschedule() {
 cmd_uninstall() {
   cmd_unschedule
   rm -rf "$STATE_DIR"
-  rm -f "$HOME/.local/bin/devsweep"
-  rm -rf "$HOME/.claude/skills/devsweep"
-  rm -f "$HOME/.codex/prompts/devsweep.md"
-  msg "✓ DevSweep desinstalado. (El log $LOG se conserva por si lo quieres.)" \
-      "✓ DevSweep uninstalled. (The log $LOG is kept in case you want it.)"
+  rm -f "$HOME/.local/bin/dev-knifesweep"
+  rm -rf "$HOME/.claude/skills/dev-knifesweep"
+  rm -f "$HOME/.codex/prompts/dev-knifesweep.md"
+  msg "✓ DEV-KnifeSweep desinstalado. (El log $LOG se conserva por si lo quieres.)" \
+      "✓ DEV-KnifeSweep uninstalled. (The log $LOG is kept in case you want it.)"
 }
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -841,7 +841,7 @@ while [ $# -gt 0 ]; do
     --yes|-y)    ASSUME_YES=1 ;;
     --global)    DO_GLOBAL=1 ;;
     --no-global) DO_GLOBAL=0 ;;
-    --version|-V) echo "devsweep $DEVSWEEP_VERSION"; exit 0 ;;
+    --version|-V) echo "dev-knifesweep $KNIFESWEEP_VERSION"; exit 0 ;;
     -h|--help)   sed -n '2,40p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
     *) msg "Opción desconocida: $1 (usa --help)" "Unknown option: $1 (use --help)"; exit 1 ;;
   esac
@@ -864,17 +864,17 @@ case "$CMD" in
 esac
 ````
 
-## Archivo 2/3: `~/.claude/skills/devsweep/SKILL.md`  (skill de Claude Code)
+## Archivo 2/3: `~/.claude/skills/dev-knifesweep/SKILL.md`  (skill de Claude Code)
 
 ````markdown
 ---
-name: devsweep
+name: dev-knifesweep
 description: Mantenimiento y optimización de directorios de proyectos en macOS — limpieza segura de artefactos de build (DerivedData, build/, dist/, cachés de Gradle/SPM/npm) con asistente, rutina programada y monitor de espacio. Use when the user asks to clean or optimize project storage, free disk space taken by builds/caches, analyze which projects use the most space, or schedule automatic cleanup routines. / Úsalo cuando el usuario pida limpiar u optimizar el almacenamiento de sus proyectos, liberar espacio de builds/cachés, o programar rutinas de limpieza.
 ---
 
-# DevSweep — guía para el agente / agent guide
+# DEV-KnifeSweep — guía para el agente / agent guide
 
-DevSweep es un CLI (`devsweep`) que limpia SOLO artefactos de build regenerables.
+DEV-KnifeSweep es un CLI (`dev-knifesweep`) que limpia SOLO artefactos de build regenerables.
 Tu papel es ser la capa conversacional: tú analizas y presentas; el motor borra
 con sus propias salvaguardas. **Nunca borres artefactos con `rm -rf` a mano —
 usa siempre el motor**, porque él aplica las 8 salvaguardas (gitignore-check,
@@ -882,81 +882,81 @@ node_modules, montajes virtuales, lista protegida, etc.).
 
 ## Si no está instalado
 
-`command -v devsweep` falla → ofrece instalarlo:
+`command -v dev-knifesweep` falla → ofrece instalarlo:
 
 ```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/j0suedaniel/devsweep/main/install.sh)"
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/j0suedaniel/DEV-KnifeSweep/main/install.sh)"
 ```
 
 ## Flujo que debes seguir (en el idioma del usuario)
 
 1. **Pregunta la raíz** de proyectos si no es obvia (o usa el directorio actual).
-2. **Escanea**: `devsweep scan --root <dir>` y muestra la tabla al usuario.
+2. **Escanea**: `dev-knifesweep scan --root <dir>` y muestra la tabla al usuario.
    Pregunta cuáles proyectos quiere optimizar.
 3. **Git primero**: para cada proyecto con cambios sin commit o sin push,
    recomienda hacer commit/push ANTES de limpiar y ofrécete a hacerlo
    (con el permiso explícito del usuario).
 4. **Reporte primero, siempre**:
-   `devsweep clean --root <dir> --safe|--deep --report` y presenta el resumen
+   `dev-knifesweep clean --root <dir> --safe|--deep --report` y presenta el resumen
    (qué se liberaría, qué se omite y por qué). `--safe` = solo artefactos con
    +7 días sin tocar; `--deep` = todos los regenerables (el próximo build será
    completo — dile esto al usuario).
 5. **Confirmación humana**: pide al usuario un "sí" explícito EN EL CHAT antes
    de ejecutar. Solo entonces corre
-   `devsweep clean --root <dir> --safe|--deep --run --yes`.
+   `dev-knifesweep clean --root <dir> --safe|--deep --run --yes`.
 6. **Reporta el resultado** con el espacio liberado y recuérdale que el próximo
    build de los proyectos limpiados será completo.
 
 ## Reglas duras (no negociables)
 
-- La **primera vez**, el propio usuario debe correr `devsweep accept` en su
+- La **primera vez**, el propio usuario debe correr `dev-knifesweep accept` en su
   terminal (es interactivo a propósito: la aceptación del aviso legal es
   humana, no del agente). Si `--run` falla por eso, explícaselo.
 - **Nunca** pases `--yes` sin que el usuario haya confirmado esa limpieza
   concreta en el chat, en este turno o el anterior.
 - **Nunca** uses nivel `deep` en rutinas programadas — el motor tampoco lo
   permite; no lo rodees.
-- Si el usuario quiere automatizar: `devsweep schedule` (rutina) y
-  `devsweep monitor` (aviso por umbral de espacio) — ambos los corre el
+- Si el usuario quiere automatizar: `dev-knifesweep schedule` (rutina) y
+  `dev-knifesweep monitor` (aviso por umbral de espacio) — ambos los corre el
   usuario en su terminal porque son interactivos.
-- No toques `~/.devsweep/disclaimer-accepted` ni los LaunchAgents a mano.
+- No toques `~/.dev-knifesweep/disclaimer-accepted` ni los LaunchAgents a mano.
 
 ## Comandos útiles
 
 | Comando | Qué hace |
 |---|---|
-| `devsweep scan --root D` | tabla de proyectos, tipo, tamaño y artefactos |
-| `devsweep clean --root D --safe --report` | dry-run conservador |
-| `devsweep clean --root D --deep --report` | dry-run completo |
+| `dev-knifesweep scan --root D` | tabla de proyectos, tipo, tamaño y artefactos |
+| `dev-knifesweep clean --root D --safe --report` | dry-run conservador |
+| `dev-knifesweep clean --root D --deep --report` | dry-run completo |
 | `... --run --yes` | ejecuta (requiere aceptación previa + tu confirmación en chat) |
 | `... --no-global` | omite cachés globales (DerivedData, SPM, gradle, npm) |
-| `devsweep status` | estado de aviso, rutina, monitor y log |
-| `devsweep unschedule` / `uninstall` | quitar agentes / desinstalar todo |
+| `dev-knifesweep status` | estado de aviso, rutina, monitor y log |
+| `dev-knifesweep unschedule` / `uninstall` | quitar agentes / desinstalar todo |
 ````
 
-## Archivo 3/3: `~/.codex/prompts/devsweep.md`  (prompt de Codex CLI)
+## Archivo 3/3: `~/.codex/prompts/dev-knifesweep.md`  (prompt de Codex CLI)
 
 ````markdown
-# /devsweep — mantenimiento seguro de proyectos (macOS)
+# /dev-knifesweep — mantenimiento seguro de proyectos (macOS)
 
-Eres la capa conversacional de DevSweep, un CLI (`devsweep`) que limpia SOLO
+Eres la capa conversacional de DEV-KnifeSweep, un CLI (`dev-knifesweep`) que limpia SOLO
 artefactos de build regenerables (DerivedData, build/, dist/, cachés de
 Gradle/SPM/npm). Responde en el idioma del usuario.
 
-Si `command -v devsweep` falla, ofrece instalarlo:
-`/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/j0suedaniel/devsweep/main/install.sh)"`
+Si `command -v dev-knifesweep` falla, ofrece instalarlo:
+`/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/j0suedaniel/DEV-KnifeSweep/main/install.sh)"`
 
 ## Flujo
 
 1. Pregunta la carpeta raíz de proyectos (o usa la actual).
-2. `devsweep scan --root <dir>` → muestra la tabla; pregunta qué proyectos optimizar.
+2. `dev-knifesweep scan --root <dir>` → muestra la tabla; pregunta qué proyectos optimizar.
 3. Antes de limpiar, recomienda commit/push de todo lo pendiente y ofrécete a
    hacerlo con permiso explícito del usuario.
-4. Siempre reporte primero: `devsweep clean --root <dir> --safe|--deep --report`.
+4. Siempre reporte primero: `dev-knifesweep clean --root <dir> --safe|--deep --report`.
    Explica: `--safe` = artefactos +7 días; `--deep` = todo lo regenerable
    (próximo build completo).
 5. Pide confirmación explícita en el chat; solo entonces:
-   `devsweep clean --root <dir> --safe|--deep --run --yes`.
+   `dev-knifesweep clean --root <dir> --safe|--deep --run --yes`.
 6. Reporta espacio liberado.
 
 ## Reglas duras
@@ -964,10 +964,10 @@ Si `command -v devsweep` falla, ofrece instalarlo:
 - NUNCA borres artefactos con `rm -rf` a mano: usa el motor (aplica
   gitignore-check, protección de node_modules, montajes virtuales y lista
   protegida).
-- La primera aceptación del aviso (`devsweep accept`) la hace el USUARIO en su
-  terminal; no la simules ni toques `~/.devsweep/`.
+- La primera aceptación del aviso (`dev-knifesweep accept`) la hace el USUARIO en su
+  terminal; no la simules ni toques `~/.dev-knifesweep/`.
 - Jamás `--yes` sin confirmación del usuario para ESA limpieza.
-- `devsweep schedule` y `devsweep monitor` los corre el usuario (interactivos).
+- `dev-knifesweep schedule` y `dev-knifesweep monitor` los corre el usuario (interactivos).
 - Las rutinas programadas solo usan nivel safe; no lo rodees.
 ````
 
@@ -975,8 +975,8 @@ Si `command -v devsweep` falla, ofrece instalarlo:
 
 **Agente:** al terminar, muestra al usuario este resumen:
 
-- Motor: `~/.local/bin/devsweep` (añade `~/.local/bin` al PATH si hace falta)
-- Primer paso humano: `devsweep accept` (leer y aceptar el aviso)
-- Asistente: `devsweep` · Rutina: `devsweep schedule` · Monitor: `devsweep monitor`
+- Motor: `~/.local/bin/dev-knifesweep` (añade `~/.local/bin` al PATH si hace falta)
+- Primer paso humano: `dev-knifesweep accept` (leer y aceptar el aviso)
+- Asistente: `dev-knifesweep` · Rutina: `dev-knifesweep schedule` · Monitor: `dev-knifesweep monitor`
 - Todo borrado pasa por 8 salvaguardas y siempre hay reporte antes de ejecutar.
-- Repo canónico (para actualizaciones): https://github.com/j0suedaniel/devsweep
+- Repo canónico (para actualizaciones): https://github.com/j0suedaniel/DEV-KnifeSweep
