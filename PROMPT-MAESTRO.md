@@ -27,7 +27,7 @@ change of yours may break them).
 5. NUNCA ejecutes una limpieza (`--run`) sin la confirmación explícita del
    usuario en el chat, y jamás borres artefactos con `rm -rf` a mano.
 
-## Archivo 1/3: `~/.local/bin/dev-knifesweep`  (v0.2.1)
+## Archivo 1/3: `~/.local/bin/dev-knifesweep`  (v0.2.2)
 
 ````bash
 #!/bin/bash
@@ -69,7 +69,7 @@ change of yours may break them).
 
 set -uo pipefail
 
-KNIFESWEEP_VERSION="0.2.1"
+KNIFESWEEP_VERSION="0.2.2"
 STATE_DIR="$HOME/.dev-knifesweep"
 ACCEPT_FILE="$STATE_DIR/disclaimer-accepted"
 LOG="$HOME/Library/Logs/dev-knifesweep.log"
@@ -402,6 +402,16 @@ clean_global() { # $1=level $2=scan_root (para detectar versiones gradle en uso)
   del "$HOME/Library/Caches/org.swift.swiftpm" "Swift Package Manager cache"
   del "$HOME/Library/Caches/com.apple.dt.Xcode" "Xcode cache"
   [ "$lvl" -ge 2 ] && del "$HOME/Library/Developer/Xcode/CodingAssistant" "Xcode CodingAssistant"
+
+  # Workspaces de XcodeBuildMCP (el servidor MCP que compila para los agentes).
+  # 2026-08-24: uno solo habia crecido a 28 GB sin que nada lo limpiara y llevo
+  # el disco al 100%. Son DerivedData por workspace: regenerables.
+  if [ "$lvl" -ge 2 ] && [ -d "$HOME/Library/Developer/XcodeBuildMCP/workspaces" ]; then
+    for d in "$HOME/Library/Developer/XcodeBuildMCP/workspaces"/*; do
+      [ -d "$d" ] || continue
+      del "$d" "XcodeBuildMCP workspace $(basename "$d")"
+    done
+  fi
 
   # Gradle: SOLO versiones que ningún wrapper del root usa + build-cache + logs
   local GC="$HOME/.gradle/caches" KEEP ver
